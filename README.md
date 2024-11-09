@@ -3,7 +3,9 @@
 Attempt at containerizing a router.
 
 To run KPN demo: `sudo docker compose -f kpn-test-compose.yaml up`
+
 To peek in ISP container: `sudo docker compose -f kpn-test-compose.yaml exec isp-kpn sh`
+
 To peek in ingress container: `sudo docker compose -f kpn-test-compose.yaml exec ingress-kpn sh`
 
 To build all containers: `sudo ./build-containers`
