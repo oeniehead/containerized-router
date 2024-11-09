@@ -1,0 +1,30 @@
+FROM router-base:latest
+
+RUN apk add --update --no-cache rp-pppoe
+
+# Copy network information
+COPY config/interfaces /etc/network/interfaces
+
+# Copy PPPoE network configuration
+COPY config/pppoe-server-options /etc/ppp/pppoe-server-options
+COPY config/chap-secrets /etc/ppp/chap-secrets
+COPY --chmod=755 services/pppoe-server/ip-up /etc/ppp/ip-up
+COPY --chmod=755 services/pppoe-server/ip-down /etc/ppp/ip-down
+
+# Copy Kea DHCPv6 config
+COPY config/kea-dhcp6.conf /etc/kea/kea-dhcp6.conf
+RUN mkdir -p /kea/
+
+# Copy radvd config
+COPY config/radvd.conf /etc/radvd.conf
+
+# Copy the OpenRC service scripts into the container
+COPY --chmod=755 services/pppoe-server/pppoe-server /etc/init.d/pppoe-server
+COPY --chmod=755 services/dhcpv6/dhcpv6 /etc/init.d/dhcpv6
+COPY --chmod=755 services/radvd/radvd /etc/init.d/radvd
+
+# Add the services to the default runlevel
+RUN rc-update add pppoe-server default
+RUN rc-update add dhcpv6 default
+RUN rc-update add radvd default
+

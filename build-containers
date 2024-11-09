@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Define the order of container builds
+containers=("router-base" "isp-kpn" "ingress-kpn")
+
+# Iterate over each container and build it
+for container in "${containers[@]}"; do
+    echo "Building container: $container"
+    # Navigate to the container's directory
+    container_dir="./containers/$container"
+
+    # Check if the Containerfile exists
+    if [ -f "$container_dir/Containerfile" ]; then
+        # Build the container using Docker
+        docker build -t "$container" -f "$container_dir/Containerfile" "$container_dir"
+        if [ $? -ne 0 ]; then
+            echo "Failed to build $container. Exiting."
+            exit 1
+        fi
+    else
+        echo "Containerfile not found for $container in $container_dir. Skipping."
+    fi
+done
+
+echo "All containers built successfully."

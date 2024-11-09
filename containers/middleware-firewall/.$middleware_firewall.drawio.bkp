@@ -1,0 +1,136 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.186 Electron/32.2.1 Safari/537.36" version="24.7.17">
+  <diagram name="Page-1" id="ERIMmWtwNbsZnRJRYlLk">
+    <mxGraphModel dx="803" dy="587" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dEZjPtsZi1BlvbsK9IvD-1" value="" style="rounded=1;whiteSpace=wrap;html=1;glass=0;arcSize=2;" parent="1" vertex="1">
+          <mxGeometry x="40" y="320" width="760" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="dEZjPtsZi1BlvbsK9IvD-2" value="&lt;div&gt;isp_in&lt;/div&gt;macvlan / internal&lt;div&gt;No assigned IPv4&lt;/div&gt;&lt;div&gt;Dynamic IPv6 GUA&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="360" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="dEZjPtsZi1BlvbsK9IvD-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="dEZjPtsZi1BlvbsK9IvD-1" target="dEZjPtsZi1BlvbsK9IvD-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dEZjPtsZi1BlvbsK9IvD-19" value="Kernel&lt;div&gt;Firewall&lt;/div&gt;&lt;div&gt;(nftables)&lt;/div&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
+          <mxGeometry x="180" y="350" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-1" value="Trunk A" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="340" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-2" value="Trunk B" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="370" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-3" value="Trunk C" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="400" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-4" value="VLAN X" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="460" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-5" value="VLAN Y" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="490" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-6" value="VLAN Z" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="520" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-9" value="bridge&lt;div&gt;(VLAN aware)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="340" width="90" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-11" value="" style="endArrow=classic;html=1;rounded=0;startArrow=classic;startFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="350" as="sourcePoint" />
+            <mxPoint x="680" y="349.71" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-12" value="Trunk" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" connectable="0" vertex="1" parent="QXVgdAyz402HY5TkgpPN-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-13" value="" style="endArrow=classic;html=1;rounded=0;startArrow=classic;startFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="380" as="sourcePoint" />
+            <mxPoint x="680" y="379.71" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-14" value="Trunk" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" connectable="0" vertex="1" parent="QXVgdAyz402HY5TkgpPN-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-15" value="" style="endArrow=classic;html=1;rounded=0;startArrow=classic;startFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="410" as="sourcePoint" />
+            <mxPoint x="680" y="409.71" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-16" value="Trunk" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" connectable="0" vertex="1" parent="QXVgdAyz402HY5TkgpPN-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-17" value="" style="endArrow=classic;html=1;rounded=0;startArrow=classic;startFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="470" as="sourcePoint" />
+            <mxPoint x="680" y="469.71" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-18" value="VLAN X" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" connectable="0" vertex="1" parent="QXVgdAyz402HY5TkgpPN-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-19" value="" style="endArrow=classic;html=1;rounded=0;startArrow=classic;startFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="500" as="sourcePoint" />
+            <mxPoint x="680" y="499.71" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-20" value="VLAN Y" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" connectable="0" vertex="1" parent="QXVgdAyz402HY5TkgpPN-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-21" value="" style="endArrow=classic;html=1;rounded=0;startArrow=classic;startFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="530" as="sourcePoint" />
+            <mxPoint x="680" y="529.71" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-22" value="VLAN Z" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" connectable="0" vertex="1" parent="QXVgdAyz402HY5TkgpPN-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-23" value="radvd" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="455" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-25" value="VLAN N&lt;div&gt;Fixed IPv4&lt;/div&gt;&lt;div&gt;Fixed IPv6 ULA&lt;/div&gt;&lt;div&gt;Dynamic IPv6 GUA&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="340" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-26" value="" style="endArrow=classic;html=1;rounded=0;startArrow=classic;startFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="410" y="360.29" as="sourcePoint" />
+            <mxPoint x="500" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-27" value="VLAN N" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" connectable="0" vertex="1" parent="QXVgdAyz402HY5TkgpPN-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-28" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="QXVgdAyz402HY5TkgpPN-23" target="QXVgdAyz402HY5TkgpPN-25">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="300" y="580" as="sourcePoint" />
+            <mxPoint x="350" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="QXVgdAyz402HY5TkgpPN-29" target="QXVgdAyz402HY5TkgpPN-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-29" value="Update prefix&lt;div&gt;Restart radvd&lt;/div&gt;" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="450" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-30" value="" style="endArrow=classic;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="QXVgdAyz402HY5TkgpPN-29">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="20" y="470" as="sourcePoint" />
+            <mxPoint x="160" y="534.71" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="70" y="470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QXVgdAyz402HY5TkgpPN-31" value="From ISP container" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;" connectable="0" vertex="1" parent="QXVgdAyz402HY5TkgpPN-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

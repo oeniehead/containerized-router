@@ -1,0 +1,19 @@
+#!/sbin/openrc-run
+
+depend() {
+    need localmount
+    need rename-interface
+    before net
+}
+
+start() {
+    ebegin "Configuring network interfaces"
+    ifup -a
+    eend $?
+}
+
+stop() {
+    ebegin "Deconfiguring network interfaces"
+    ifdown -a
+    eend $?
+}

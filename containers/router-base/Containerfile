@@ -1,0 +1,53 @@
+FROM alpine:3.20
+
+# Setup 
+RUN set -x \
+    && apk add --update --no-cache nano \
+        ifupdown-ng ifupdown-ng-ppp ppp bridge \
+        openrc mdevd-openrc \
+        python3 scapy busybox-openrc \
+        tcpdump strace file \
+        kea dhcpcd radvd \
+    # Disable getty's
+    && sed -i 's/^\(tty\d\:\:\)/#\1/g' /etc/inittab \
+    && sed -i \
+        # Change subsystem type to "docker"
+        -e 's/#rc_sys=".*"/rc_sys="docker"/g' \
+        # Allow all variables through
+        -e 's/#rc_env_allow=".*"/rc_env_allow="\*"/g' \
+        # Start crashed services
+        -e 's/#rc_crashed_stop=.*/rc_crashed_stop=NO/g' \
+        -e 's/#rc_crashed_start=.*/rc_crashed_start=YES/g' \
+        # Define extra dependencies for services
+        -e 's/#rc_provide=".*"/rc_provide="loopback net"/g' \
+        /etc/rc.conf \
+    # Remove unnecessary services
+    && rm -f /etc/init.d/hwdrivers \
+            /etc/init.d/hwclock \
+            /etc/init.d/hwdrivers \
+            /etc/init.d/modules \
+            /etc/init.d/modules-load \
+            /etc/init.d/modloop \
+    # Can't do cgroups
+    && sed -i \
+        -e 's/\tcgroup_add_service/# cgroup_add_service/g' \
+        -e 's/PREFIX|SYSTEMD-NSPAWN/PREFIX|SYSTEMD-NSPAWN|DOCKER/g' \
+        /lib/rc/sh/openrc-run.sh \
+    && sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh
+
+# Copy the network service script into the container
+COPY --chmod=755 services/network/network /etc/init.d/network
+COPY --chmod=755 services/rename-interface/rename-interface /etc/init.d/rename-interface
+
+# Ensure OpenRC directories are set up
+RUN mkdir -p /run/openrc && touch /run/openrc/softlevel
+
+# Add the service to the default runlevel
+RUN rc-update add syslog boot
+RUN rc-update add network default
+
+# Start OpenRC and the custom service
+#CMD ["openrc", "boot"]
+WORKDIR /
+CMD ["/sbin/init"]
+

@@ -1,0 +1,10 @@
+[package]
+name = "netavark-host-interface-plugin"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+env_logger = "0.11.5"
+ipnet = "2.10.1"
+netavark = "1.13.0"
+netlink-packet-route = "0.21.0"

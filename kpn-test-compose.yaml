@@ -1,0 +1,41 @@
+services:
+  isp-kpn:
+    image: isp-kpn
+    privileged: true
+    environment:
+      - MAC_TO_IFACE_1=02:42:ac:11:00:02:isp_out
+    networks:
+      isp_network:
+        mac_address: 02:42:ac:11:00:02
+
+  ingress-kpn:
+    image: ingress-kpn
+    privileged: true
+    environment:
+      - MAC_TO_IFACE_1=02:42:ac:11:00:03:isp_in
+      - MAC_TO_IFACE_2=02:42:ac:11:01:03:eventbus
+    devices:
+      - "/dev/ppp:/dev/ppp"
+    networks:
+      isp_network:
+        mac_address: 02:42:ac:11:00:03
+      eventbus:
+        mac_address: 02:42:ac:11:01:03
+
+networks:
+  isp_network:
+    external: true
+  eventbus:
+    external: true
+  # isp_network:
+  #   driver: bridge
+  #   internal: true
+  #   driver_opts:
+  #     com.docker.network.bridge.name: isp_network
+  # eventbus:
+  #   driver: bridge
+  #   internal: true
+  #   driver_opts:
+  #     com.docker.network.bridge.name: eventbus
+
+#docker network create --driver=bridge --internal --ipv6 --opt com.docker.network.bridge.name=isp_network isp_network 

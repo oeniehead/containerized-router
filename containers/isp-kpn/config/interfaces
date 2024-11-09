@@ -1,0 +1,15 @@
+auto isp_out
+iface isp_out
+    #post-up sysctl -w "net.ipv6.conf.isp_out.accept_ra=0"
+
+auto isp_out.6
+iface isp_out.6
+    #post-up sysctl -w "net.ipv6.conf.isp_out.6.accept_ra=0"
+    vlan-raw-device isp_out
+
+auto ppp_bridge
+iface ppp_bridge
+    use bridge
+
+	bridge-fd 0
+	bridge-stp off

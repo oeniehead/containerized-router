@@ -1,0 +1,5 @@
+#!/bin/sh
+
+BRIDGE=ppp_bridge
+
+ip link set $1 master $BRIDGE

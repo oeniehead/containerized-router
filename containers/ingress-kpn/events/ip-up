@@ -1,0 +1,11 @@
+#!/bin/sh
+# This script is called with the following arguments:
+# $1 = interface name (e.g. ppp0)
+# $2 = tty device (e.g. /dev/ttyS1)
+# $3 = link speed (e.g. 38400)
+# $4 = local IP address
+# $5 = remote IP address
+# $6 = ipparam parameter (e.g. kpn)
+
+# Call the Python script for IPv4
+/usr/bin/python3 /path/to/your/script.py "ipv4" "$1" "$4" "$5"

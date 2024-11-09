@@ -1,0 +1,38 @@
+#!/sbin/openrc-run
+
+description="Rename network interfaces based on MAC address"
+
+depend() {
+    need net
+}
+
+start() {
+    ebegin "Renaming network interfaces"
+
+    # Read environment variables
+    for var in $(env | grep '^MAC_TO_IFACE_'); do
+        mac=$(echo $var | cut -d '=' -f 2 | cut -d ':' -f -6)
+        iface_name=$(echo $var | cut -d '=' -f 2 | cut -d ':' -f 7)
+
+        # Find the interface with the given MAC address
+        iface=$(ip link | grep -B1 $mac | head -n1 | awk -F: '{print $2}' | tr -d ' ' | cut -d '@' -f 1)
+
+        if [ -n "$iface" ]; then
+            ip link set $iface name $iface_name
+            if [ $? -ne 0 ]; then
+                eend 1 "Failed to rename $iface to $iface_name"
+                return 1
+            fi
+        else
+            eend 1 "No interface found with MAC $mac"
+            return 1
+        fi
+    done
+
+    eend 0 "All interfaces renamed successfully"
+}
+
+stop() {
+    ebegin "Stopping rename-interfaces service"
+    eend 0
+}

@@ -1,0 +1,14 @@
+# PPPoE server options
+auth
+debug
+lcp-echo-failure 3
+lcp-echo-interval 60
+mtu 1492
+mru 1492
+require-chap
+ms-dns 8.8.8.8
+ms-dns 8.8.4.4
+netmask 255.255.255.0
+defaultroute
+noipdefault
+usepeerdns
