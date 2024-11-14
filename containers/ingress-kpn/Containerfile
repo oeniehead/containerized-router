@@ -2,6 +2,8 @@ FROM router-base:latest
 
 RUN mkdir -p /run/ppp
 
+RUN apk add --update --no-cache dhcpcd
+
 # Copy network configuration
 COPY config/interfaces /etc/network/interfaces
 COPY config/kpn /etc/ppp/peers/kpn

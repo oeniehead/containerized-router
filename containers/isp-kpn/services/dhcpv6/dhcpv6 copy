@@ -1,0 +1,36 @@
+#!/sbin/openrc-run
+
+# Description of the service
+description="Kea DHCPv6 Server"
+
+# Command to start the PPPoE server
+command="/usr/sbin/kea-dhcp6"
+command_args="-c /etc/kea/kea-dhcp6.conf"
+
+# This service requires the network interfaces to be up
+depend() {
+    need network
+}
+
+# Start the service
+start() {
+    ebegin "Starting Kea DHCPv6 Server"
+
+    mkdir -p /run/kea
+
+    start-stop-daemon --start --background --exec $command -- $command_args
+
+    eend $?
+}
+
+# Stop the service
+stop() {
+    ebegin "Stopping Kea DHCPv6 Server"
+    start-stop-daemon --stop --exec $command
+    eend $?
+}
+
+# Check the status of the service
+status() {
+    status_of_proc "$command" "Kea DHCPv6 Server"
+}

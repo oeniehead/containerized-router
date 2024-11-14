@@ -11,20 +11,21 @@ COPY config/chap-secrets /etc/ppp/chap-secrets
 COPY --chmod=755 services/pppoe-server/ip-up /etc/ppp/ip-up
 COPY --chmod=755 services/pppoe-server/ip-down /etc/ppp/ip-down
 
-# Copy Kea DHCPv6 config
-COPY config/kea-dhcp6.conf /etc/kea/kea-dhcp6.conf
-RUN mkdir -p /kea/
+# Copy DHCPv6 config
+# COPY config/kea-dhcp6.conf /etc/kea/kea-dhcp6.conf
+# RUN mkdir -p /kea/
+COPY config/dhcpd.conf /etc/dhcpd.conf
 
 # Copy radvd config
-COPY config/radvd.conf /etc/radvd.conf
+# COPY config/radvd.conf /etc/radvd.conf
 
 # Copy the OpenRC service scripts into the container
 COPY --chmod=755 services/pppoe-server/pppoe-server /etc/init.d/pppoe-server
 COPY --chmod=755 services/dhcpv6/dhcpv6 /etc/init.d/dhcpv6
-COPY --chmod=755 services/radvd/radvd /etc/init.d/radvd
+# COPY --chmod=755 services/radvd/radvd /etc/init.d/radvd
 
 # Add the services to the default runlevel
 RUN rc-update add pppoe-server default
 RUN rc-update add dhcpv6 default
-RUN rc-update add radvd default
+# RUN rc-update add radvd default
 

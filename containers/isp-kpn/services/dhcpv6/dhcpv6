@@ -1,11 +1,26 @@
 #!/sbin/openrc-run
 
 # Description of the service
-description="Kea DHCPv6 Server"
+description="DHCPv6 Server"
+
+ppp_interfaces=""
+for iface in /sys/class/net/ppp*; do
+    # Check if interface exists and is a ppp interface
+    if [ -e "$iface" ]; then
+        # Extract interface name from path
+        ifname=$(basename "$iface")
+        # Add to string with space separator
+        if [ -z "$ppp_interfaces" ]; then
+            ppp_interfaces="$ifname"
+        else
+            ppp_interfaces="$ppp_interfaces $ifname"
+        fi
+    fi
+done
 
 # Command to start the PPPoE server
-command="/usr/sbin/kea-dhcp6"
-command_args="-c /etc/kea/kea-dhcp6.conf"
+command="/usr/sbin/dhcpd"
+command_args="-6 -f -cf /etc/dhcpd.conf -lf /run/dhcpd6.leases -pf /run/dhcpd6.pid ${ppp_interfaces}"
 
 # This service requires the network interfaces to be up
 depend() {
@@ -14,9 +29,14 @@ depend() {
 
 # Start the service
 start() {
-    ebegin "Starting Kea DHCPv6 Server"
+    ebegin "Starting DHCPv6 Server"
 
-    mkdir -p /run/kea
+    touch /run/dhcpd6.leases
+
+    if [ -z "$ppp_interfaces" ]; then
+        echo "No PPP interfaces found" >&2
+        return 0
+    fi
 
     start-stop-daemon --start --background --exec $command -- $command_args
 
@@ -25,12 +45,12 @@ start() {
 
 # Stop the service
 stop() {
-    ebegin "Stopping Kea DHCPv6 Server"
+    ebegin "Stopping DHCPv6 Server"
     start-stop-daemon --stop --exec $command
     eend $?
 }
 
 # Check the status of the service
 status() {
-    status_of_proc "$command" "Kea DHCPv6 Server"
+    status_of_proc "$command" "DHCPv6 Server"
 }

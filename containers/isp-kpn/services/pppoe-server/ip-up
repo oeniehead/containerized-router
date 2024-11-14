@@ -1,5 +1,30 @@
 #!/bin/sh
 
-BRIDGE=ppp_bridge
+# These variables are for the use of the scripts run by run-parts
+PPP_IFACE="$1"
+PPP_TTY="$2"
+PPP_SPEED="$3"
+PPP_LOCAL="$4"
+PPP_REMOTE="$5"
+PPP_IPPARAM="$6"
+export PPP_IFACE PPP_TTY PPP_SPEED PPP_LOCAL PPP_REMOTE PPP_IPPARAM
 
-ip link set $1 master $BRIDGE
+ppp_num=""
+case "$PPP_IFACE" in
+    "ppp0") ppp_num="0" ;;
+    "ppp1") ppp_num="1" ;;
+    "ppp2") ppp_num="2" ;;
+    "ppp3") ppp_num="3" ;;
+    "ppp4") ppp_num="4" ;;
+    "ppp5") ppp_num="5" ;;
+    "ppp6") ppp_num="6" ;;
+    "ppp7") ppp_num="7" ;;
+    "ppp8") ppp_num="8" ;;
+    "ppp9") ppp_num="9" ;;
+    *) echo "Invalid PPP interface name" >&2; exit 1 ;;
+esac
+
+/sbin/ip -6 addr add "2001:8c0:0:0::${ppp_num}1/40" dev "$1"
+
+/sbin/rc-service dhcpv6 restart
+

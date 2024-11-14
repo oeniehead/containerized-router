@@ -7,5 +7,16 @@
 # $5 = remote IPv6 address
 # $6 = ipparam parameter (e.g. kpn)
 
+# These variables are for the use of the scripts run by run-parts
+PPP_IFACE="$1"
+PPP_TTY="$2"
+PPP_SPEED="$3"
+PPP_LOCAL="$4"
+PPP_REMOTE="$5"
+PPP_IPPARAM="$6"
+export PPP_IFACE PPP_TTY PPP_SPEED PPP_LOCAL PPP_REMOTE PPP_IPPARAM
+
+
+
 # Call the Python script for IPv6
 /usr/bin/python3 /path/to/your/script.py "ipv6" "$1" "$4" "$5"

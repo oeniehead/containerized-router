@@ -1,3 +1,26 @@
+FROM alpine:3.20 AS builder
+
+RUN apk add --no-cache alpine-sdk git
+
+RUN git clone --depth=1 https://gitlab.alpinelinux.org/alpine/aports.git /aports
+
+WORKDIR /aports/main/dhcp
+
+COPY patches/ppp.patch /aports/main/dhcp/ppp.patch 
+
+RUN mkdir /build \
+    && ls -la /aports/main/dhcp
+    
+RUN abuild -F deps \
+    && abuild -F checksum \
+    && sed -i '/^source=".*/a      ppp.patch' APKBUILD \
+    && sed -i "/^sha512sums=\".*/a$(sha512sum ppp.patch)" APKBUILD \
+    && abuild-keygen -a -n \
+    && cp /root/.abuild/*.rsa.pub /etc/apk/keys/
+
+RUN abuild -r -F -P /build \
+    && ls -laR /build
+
 FROM alpine:3.20
 
 # Setup 
@@ -7,7 +30,7 @@ RUN set -x \
         openrc mdevd-openrc \
         python3 scapy busybox-openrc \
         tcpdump strace file \
-        kea dhcpcd radvd \
+        kea radvd dnsmasq \
     # Disable getty's
     && sed -i 's/^\(tty\d\:\:\)/#\1/g' /etc/inittab \
     && sed -i \
@@ -34,6 +57,10 @@ RUN set -x \
         -e 's/PREFIX|SYSTEMD-NSPAWN/PREFIX|SYSTEMD-NSPAWN|DOCKER/g' \
         /lib/rc/sh/openrc-run.sh \
     && sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh
+
+COPY --from=builder /build/main/x86_64/*.apk /tmp/
+RUN ls -la /tmp/ && rm /tmp/dhcp-server-ldap*
+RUN apk add --allow-untrusted --no-cache /tmp/*.apk
 
 # Copy the network service script into the container
 COPY --chmod=755 services/network/network /etc/init.d/network

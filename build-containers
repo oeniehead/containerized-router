@@ -12,7 +12,7 @@ for container in "${containers[@]}"; do
     # Check if the Containerfile exists
     if [ -f "$container_dir/Containerfile" ]; then
         # Build the container using Docker
-        docker build -t "$container" -f "$container_dir/Containerfile" "$container_dir"
+        docker build -t "$container" -f "$container_dir/Containerfile" --progress plain "$container_dir"
         if [ $? -ne 0 ]; then
             echo "Failed to build $container. Exiting."
             exit 1
