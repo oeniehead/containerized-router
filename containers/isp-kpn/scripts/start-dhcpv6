@@ -1,0 +1,67 @@
+#!/bin/sh
+
+# Determine all ppp interfaces
+ppp_interfaces=""
+for iface in /sys/class/net/ppp*; do
+    # Check if interface exists and is a ppp interface
+    if [ -e "$iface" ]; then
+        # Extract interface name from path
+        ifname=$(basename "$iface")
+        # Add to string with space separator
+        if [ -z "$ppp_interfaces" ]; then
+            ppp_interfaces="$ifname"
+        else
+            ppp_interfaces="$ppp_interfaces $ifname"
+        fi
+    fi
+done
+
+# Generate a DUID if we don't have one already
+if [ ! -f /run/duid ]; then
+    # Generate 6 random hex bytes for MAC address
+    random_mac=""
+    for i in $(seq 1 6); do
+        byte=$(dd if=/dev/urandom bs=1 count=1 2>/dev/null | hexdump -v -e '/1 "%02x"')
+        if [ -z "$random_mac" ]; then
+            random_mac="$byte"
+        else
+            random_mac="$random_mac:$byte"
+        fi
+    done
+
+    # DUID-LL format:
+    # 00:03     - DUID-LL type
+    # 00:01     - Hardware type (Ethernet)
+    # MAC       - Link-layer address
+
+    duid="$random_mac"
+    echo -n "$duid" > /run/duid
+else
+    duid=$(cat /run/duid)
+fi
+
+# Create dhcpd6.conf
+cat > /run/dhcpd6.conf << EOF
+# Server DUID configuration
+server-duid ll ethernet ${duid};
+
+# Global parameters
+authoritative;
+ddns-update-style none;
+
+option dhcp6.name-servers 2620:0:ccc::2, 2620:0:ccd::2;
+option dhcp6.domain-search "fakekpn.local";
+
+max-lease-time 432000;
+default-lease-time 86400;
+
+subnet6 2001:8c0::/32 {
+    range6 2001:8c0:0000::/64;
+    prefix6 2001:8c0:0001:0000:: 2001:8c0:ffff:0000:: /48;
+}
+EOF
+
+/bin/touch /run/dhcpd6.leases
+
+/usr/sbin/dhcpd -6 -f -cf /run/dhcpd6.conf -lf /run/dhcpd6.leases -pf /run/dhcpd6.pid ${ppp_interfaces}
+

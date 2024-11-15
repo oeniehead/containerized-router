@@ -24,6 +24,9 @@ COPY --chmod=755 services/pppoe-server/pppoe-server /etc/init.d/pppoe-server
 COPY --chmod=755 services/dhcpv6/dhcpv6 /etc/init.d/dhcpv6
 # COPY --chmod=755 services/radvd/radvd /etc/init.d/radvd
 
+# Copy scripts
+COPY --chmod=775 scripts/* /usr/local/bin
+
 # Add the services to the default runlevel
 RUN rc-update add pppoe-server default
 RUN rc-update add dhcpv6 default
