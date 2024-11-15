@@ -1,12 +1,27 @@
 services:
+  upstream-test:
+    image: upstream-test
+    privileged: true
+    environment:
+      - MAC_TO_IFACE_1=02:42:ac:11:02:02:internet
+    networks:
+      upstream_network:
+        mac_address: 02:42:ac:11:02:02
+        ipv4_address: 5.0.0.2
+        ipv6_address: 2001:ffff::2
   isp-kpn:
     image: isp-kpn
     privileged: true
     environment:
       - MAC_TO_IFACE_1=02:42:ac:11:00:02:isp_out
+      - MAC_TO_IFACE_2=02:42:ac:11:02:03:internet
     networks:
       isp_network:
         mac_address: 02:42:ac:11:00:02
+      upstream_network:
+        mac_address: 02:42:ac:11:02:03
+        ipv4_address: 5.0.0.3
+        ipv6_address: 2001:ffff::3
 
   ingress-kpn:
     image: ingress-kpn
@@ -23,6 +38,18 @@ services:
         mac_address: 02:42:ac:11:01:03
 
 networks:
+  upstream_network:
+    driver: bridge
+    enable_ipv6: true
+    internal: true
+    driver_opts:
+      com.docker.network.bridge.name: upstream_net
+    ipam:
+      config:
+      - subnet: 5.0.0.0/24
+        gateway: 5.0.0.1
+      - subnet: 2001:ffff::/96
+        gateway: 2001:ffff::1
   isp_network:
     external: true
   eventbus:

@@ -1,0 +1,16 @@
+FROM router-base:latest
+
+RUN apk add --update --no-cache busybox-extras
+
+# Copy network information
+COPY config/interfaces /etc/network/interfaces
+
+# Copy services
+COPY --chmod=755 services/httpd/httpd /etc/init.d/httpd
+
+# Copy test page
+COPY services/httpd/index.html /var/www/
+
+# Add the services to the default runlevel
+RUN rc-update add httpd default
+
