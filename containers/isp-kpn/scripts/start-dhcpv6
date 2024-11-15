@@ -63,5 +63,5 @@ EOF
 
 /bin/touch /run/dhcpd6.leases
 
-/usr/sbin/dhcpd -6 -f -cf /run/dhcpd6.conf -lf /run/dhcpd6.leases -pf /run/dhcpd6.pid ${ppp_interfaces}
+exec /usr/sbin/dhcpd -6 -f -cf /run/dhcpd6.conf -lf /run/dhcpd6.leases -pf /run/dhcpd6.pid ${ppp_interfaces}
 

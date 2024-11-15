@@ -36,6 +36,8 @@ services:
         mac_address: 02:42:ac:11:00:03
       eventbus:
         mac_address: 02:42:ac:11:01:03
+      router_interconnect:
+        mac_address: 02:42:ac:11:02:03
 
 networks:
   upstream_network:
@@ -50,6 +52,12 @@ networks:
         gateway: 5.0.0.1
       - subnet: 2001:ffff::/96
         gateway: 2001:ffff::1
+  router_interconnect:
+    driver: bridge
+    enable_ipv6: true
+    internal: true
+    driver_opts:
+      com.docker.network.bridge.name: router
   isp_network:
     external: true
   eventbus:

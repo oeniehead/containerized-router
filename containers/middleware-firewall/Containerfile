@@ -1,0 +1,15 @@
+FROM router-base:latest
+
+RUN mkdir -p /run/ppp
+
+RUN apk add --update --no-cache dhcpcd
+
+# Copy network configuration
+COPY config/interfaces /etc/network/interfaces
+COPY config/kpn /etc/ppp/peers/kpn
+
+# Copy IP event handlers
+COPY --chmod=755 events/ip-up /etc/ppp/ip-up
+COPY --chmod=755 events/ipv6-up /etc/ppp/ipv6-up
+COPY --chmod=755 events/ip-event /usr/local/bin/ip-event
+
