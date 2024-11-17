@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Read environment variables
+for var in $(env | grep '^MAC_TO_IFACE_'); do
+    mac=$(echo $var | cut -d '=' -f 2 | cut -d ':' -f -6)
+    iface_name=$(echo $var | cut -d '=' -f 2 | cut -d ':' -f 7)
+
+    # Find the interface with the given MAC address
+    iface=$(ip link | grep -B1 $mac | head -n1 | awk -F: '{print $2}' | tr -d ' ' | cut -d '@' -f 1)
+
+    if [ -n "$iface" ]; then
+        ip link set $iface name $iface_name
+        if [ $? -ne 0 ]; then
+            logger -p syslog.err "Failed to rename $iface to $iface_name"
+            exit 1
+        fi
+
+        logger -p syslog.info "Renamed ${iface} to ${iface_name}"
+    else
+        logger -p syslog.err "No interface found with MAC $mac"
+        exit 1
+    fi
+done

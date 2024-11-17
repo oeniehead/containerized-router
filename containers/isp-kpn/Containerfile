@@ -3,32 +3,18 @@ FROM router-base:latest
 RUN apk add --update --no-cache rp-pppoe
 
 # Copy network information
-COPY config/interfaces /etc/network/interfaces
+COPY config/interfaces.template /etc/network/
 
-# Copy PPPoE network configuration
-COPY config/pppoe-server-options /etc/ppp/pppoe-server-options
-COPY config/chap-secrets /etc/ppp/chap-secrets
+# Add pppoe-server service
+COPY services/pppoe-server/pppoe-server /etc/dinit.d/
+RUN dinitctl --offline --services-dir /etc/dinit.d/ enable pppoe-server
 COPY --chmod=755 services/pppoe-server/ip-up /etc/ppp/ip-up
 COPY --chmod=755 services/pppoe-server/ip-down /etc/ppp/ip-down
+COPY --chmod=755 services/pppoe-server/start-dhcpv6-service /usr/local/bin/
+COPY services/pppoe-server/pppoe-server-options /etc/ppp/
+COPY services/pppoe-server/chap-secrets /etc/ppp/
 
-# Copy DHCPv6 config
-# COPY config/kea-dhcp6.conf /etc/kea/kea-dhcp6.conf
-# RUN mkdir -p /kea/
-COPY config/dhcpd.conf /etc/dhcpd.conf
-
-# Copy radvd config
-# COPY config/radvd.conf /etc/radvd.conf
-
-# Copy the OpenRC service scripts into the container
-COPY --chmod=755 services/pppoe-server/pppoe-server /etc/init.d/pppoe-server
-COPY --chmod=755 services/dhcpv6/dhcpv6 /etc/init.d/dhcpv6
-# COPY --chmod=755 services/radvd/radvd /etc/init.d/radvd
-
-# Copy scripts
-COPY --chmod=775 scripts/* /usr/local/bin
-
-# Add the services to the default runlevel
-RUN rc-update add pppoe-server default
-RUN rc-update add dhcpv6 default
-# RUN rc-update add radvd default
+# Add dhcpv6 service
+COPY services/dhcpv6/dhcpv6 /etc/dinit.d/
+COPY --chmod=775 services/dhcpv6/start-dhcpv6 /usr/local/bin/
 

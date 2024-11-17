@@ -1,0 +1,16 @@
+#!/bin/sh
+
+TEMPLATE="/etc/network/interfaces.template"
+OUTPUT="/etc/network/interfaces"
+
+if [ -f "$TEMPLATE" ]; then
+    envsubst < "$TEMPLATE" > "$OUTPUT"
+    logger -p syslog.info "Created $OUTPUT using $TEMPLATE"
+elif [ -f "$OUTPUT" ]; then
+    logger -p syslog.info "Using $OUTPUT for network interfaces"
+else
+    logger -p syslog.err "Neither $TEMPLATE nor $OUTPUT is present"
+    exit 1
+fi
+
+ifup -a

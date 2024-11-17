@@ -1,0 +1,5 @@
+type = scripted
+command = /usr/local/bin/rename-interfaces-env
+restart = false
+#options = shares-console
+depends-on = syslog-ng

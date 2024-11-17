@@ -1,0 +1,25 @@
+auto isp_in
+iface isp_in
+    
+auto isp_internet_in
+iface isp_internet_in
+    requires isp_in
+    vlan-raw-device isp_in
+    vlan-id 6
+
+auto trunk
+iface trunk
+
+auto dmz
+iface dmz
+    requires trunk
+    vlan-raw-device trunk
+    vlan-id ${DMZ_VLAN}
+    address ${DMZ_IPV4}
+    address ${DMZ_IPV6}
+
+auto eventbus
+iface eventbus
+    
+#post-up sysctl -w "net.ipv6.conf.isp_in.6.accept_ra=0"
+#post-up sysctl -w "net.ipv6.conf.isp_in.accept_ra=0"

@@ -1,0 +1,44 @@
+#!/bin/sh
+
+# Generate a DUID if we don't have one already
+if [ ! -f /run/duid/duid ]; then
+    # Generate 6 random hex bytes for MAC address
+    random_mac=""
+    for i in $(seq 1 6); do
+        byte=$(dd if=/dev/urandom bs=1 count=1 2>/dev/null | hexdump -v -e '/1 "%02x"')
+        if [ -z "$random_mac" ]; then
+            random_mac="$byte"
+        else
+            random_mac="$random_mac:$byte"
+        fi
+    done
+
+    # DUID-LL format:
+    # 00:03     - DUID-LL type
+    # 00:01     - Hardware type (Ethernet)
+    # MAC       - Link-layer address
+
+    duid="$random_mac"
+    echo -n "$duid" > /run/duid/duid
+else
+    duid=$(cat /run/duid/duid)
+fi
+
+# Create dhcpcd6.conf
+cat > /run/dhcpcd6.conf << EOF
+duid 00:01:00:01:${duid}
+
+interface wan
+ipv6only
+ia_pd 1
+noipv6rs
+EOF
+
+# Start or restart the service
+if ! dinitctl is-started dhcpcd; then
+    logger -p syslog.info "Starting dhcpcd service for the first time"
+    dinitctl start --no-wait dhcpcd
+else
+    logger -p syslog.info "Restarting dhcpcd service"
+    dinitctl restart --no-wait dhcpcd
+fi

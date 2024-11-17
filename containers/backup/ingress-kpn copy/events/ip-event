@@ -5,14 +5,15 @@ from scapy.all import Ether, sendp
 
 def main():
     if len(sys.argv) != 5:
-        print("Usage: ip-event.py <protocol> <ipv4 IP/ipv6 prefix> <reason>")
+        print("Usage: ip-event.py <protocol> <interface> <local_ip> <remote_ip>")
         return
 
     protocol = sys.argv[1]
-    ip_or_prefix = sys.argv[2]
-    reason = sys.argv[3]
+    interface = sys.argv[2]
+    local_ip = sys.argv[3]
+    remote_ip = sys.argv[4]
 
-    print(f"Protocol: {protocol}, Local IP or prefix: {local_ip}, Reason: {reason}")
+    print(f"Protocol: {protocol}, Interface: {interface}, Local IP: {local_ip}, Remote IP: {remote_ip}")
     
     send_event('eventbus', 1, 'This is a test event')
 

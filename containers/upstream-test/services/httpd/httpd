@@ -1,22 +1,5 @@
-#!/sbin/openrc-run
-
-description="Simple HTTP server for test page"
-
-depend() {
-    need network
-}
-
-start() {
-    ebegin "Starting ${name}"
-    start-stop-daemon --start --exec /usr/sbin/httpd \
-        --background \
-        --make-pidfile --pidfile /var/run/httptest.pid \
-        -- -f -p 80 -h /var/www
-    eend $?
-}
-
-stop() {
-    ebegin "Stopping ${name}"
-    start-stop-daemon --stop --pidfile /var/run/httptest.pid
-    eend $?
-}
+type = process
+command = /usr/sbin/httpd -f -p 80 -h /var/www
+restart = true
+options = shares-console
+depends-on = network

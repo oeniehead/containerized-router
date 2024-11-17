@@ -1,0 +1,5 @@
+type = process
+command = /usr/bin/pon kpn
+restart = true
+#options = shares-console
+depends-on = network

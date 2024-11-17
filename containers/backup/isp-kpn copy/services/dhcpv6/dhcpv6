@@ -1,0 +1,38 @@
+#!/sbin/openrc-run
+
+# Description of the service
+description="DHCPv6 Server"
+
+
+
+# Command to start the PPPoE server
+command="/usr/local/bin/start-dhcpv6"
+command_args=""
+
+# This service requires the network interfaces to be up
+depend() {
+    need network
+}
+
+# Start the service
+start() {
+    ebegin "Starting DHCPv6 Server"
+
+    start-stop-daemon --start --background --exec $command -- $command_args
+
+    eend $?
+}
+
+# Stop the service
+stop() {
+    ebegin "Stopping DHCPv6 Server"
+
+    start-stop-daemon --stop --exec $command
+
+    eend $?
+}
+
+# Check the status of the service
+status() {
+    status_of_proc "$command" "DHCPv6 Server"
+}

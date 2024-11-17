@@ -26,5 +26,5 @@ esac
 
 /sbin/ip -6 addr add "2001:8c0:0:0::${ppp_num}1/40" dev "$1"
 
-/usr/local/bin/start-dhcpv6-service
+/sbin/rc-service dhcpv6 restart
 

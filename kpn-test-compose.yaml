@@ -1,3 +1,7 @@
+volumes:
+  isp_duid:
+  ingress_duid:
+
 services:
   upstream-test:
     image: upstream-test
@@ -13,8 +17,10 @@ services:
     image: isp-kpn
     privileged: true
     environment:
-      - MAC_TO_IFACE_1=02:42:ac:11:00:02:isp_out
+      - MAC_TO_IFACE_1=02:42:ac:11:00:02:isp_trunk
       - MAC_TO_IFACE_2=02:42:ac:11:02:03:internet
+    volumes:
+      - isp_duid:/run/duid
     networks:
       isp_network:
         mac_address: 02:42:ac:11:00:02
@@ -29,6 +35,12 @@ services:
     environment:
       - MAC_TO_IFACE_1=02:42:ac:11:00:03:isp_in
       - MAC_TO_IFACE_2=02:42:ac:11:01:03:eventbus
+      - MAC_TO_IFACE_3=02:42:ac:11:02:03:trunk
+      - DMZ_VLAN=99
+      - DMZ_IPV4=10.99.0.2/16
+      - DMZ_IPV6=fd:0:0:99::2/64
+    volumes:
+      - ingress_duid:/run/duid
     devices:
       - "/dev/ppp:/dev/ppp"
     networks:
@@ -36,7 +48,7 @@ services:
         mac_address: 02:42:ac:11:00:03
       eventbus:
         mac_address: 02:42:ac:11:01:03
-      router_interconnect:
+      trunk:
         mac_address: 02:42:ac:11:02:03
 
 networks:
@@ -52,12 +64,12 @@ networks:
         gateway: 5.0.0.1
       - subnet: 2001:ffff::/96
         gateway: 2001:ffff::1
-  router_interconnect:
+  trunk:
     driver: bridge
     enable_ipv6: true
     internal: true
     driver_opts:
-      com.docker.network.bridge.name: router
+      com.docker.network.bridge.name: trunk
   isp_network:
     external: true
   eventbus:

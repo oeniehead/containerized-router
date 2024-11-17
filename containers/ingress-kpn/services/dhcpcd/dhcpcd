@@ -1,0 +1,4 @@
+type = process
+command = dhcpcd --config /run/dhcpcd6.conf -B -d wan
+restart = true
+#options = shares-console

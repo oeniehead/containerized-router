@@ -1,0 +1,8 @@
+#!/bin/sh
+
+case "$reason" in
+    BOUND6|RENEW6|REBIND6|DEPREF6|EXPIRE6)
+        # Call our Python script with the new prefix information
+        /usr/local/bin/ip-event "ipv6" "$new_ip6_prefix" "$reason"
+        ;;
+esac

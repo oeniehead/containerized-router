@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if ! dinitctl is-started dhcpv6; then
+    logger -p syslog.info "Starting dhcpv6 service for the first time"
+    dinitctl start --no-wait dhcpv6
+else
+    logger -p syslog.info "Restarting dhcpv6 service"
+    dinitctl restart --no-wait dhcpv6
+fi

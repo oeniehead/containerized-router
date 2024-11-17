@@ -1,0 +1,27 @@
+plugin pppoe.so 
+
+isp_internet_in
+
+user "username"
+password "password"
+
+pppoe-service ""
+
+ifname "wan"
+
+defaultroute
+usepeerdns
+
+persist
+mtu 1492
+
+nodetach
+
+# IPv4 Configuration
+# ipparam kpn
+# noipdefault
+
+# IPv6 Configuration
++ipv6
+ipv6cp-accept-local
+#ipv6cp-accept-remote

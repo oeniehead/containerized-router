@@ -1,0 +1,92 @@
+# Build a patched version of dhcpd that allows binding to a PPP interface
+# This is jank for multiple reasons:
+# - dhcpd is slowly being deprecated in favour of Kea DHCP, but Kea seems
+#   to have a breaking bug that makes it listen on the peer IP of the PPP
+#   interface, which breaks the functionality altogether.
+# - This APKBUILD might change and break at any moment, but due to
+#   development on dhcpd being basically halted, this is not likely to
+#   happen often
+# - Because the abuild system is weird the build must be force to run as
+#   root, but also signing is a bit of an issue. For now a temp key is
+#   generated an copied over to the receiving container.
+FROM alpine:3.20 AS builder
+
+RUN apk add --no-cache alpine-sdk git
+RUN git clone --depth=1 https://gitlab.alpinelinux.org/alpine/aports.git /aports
+
+WORKDIR /aports/main/dhcp
+
+COPY patches/ppp.patch /aports/main/dhcp/ppp.patch 
+
+RUN mkdir /build \
+    && ls -la /aports/main/dhcp 
+RUN abuild -F deps \
+    && abuild -F checksum \
+    && sed -i '/^source=".*/a      ppp.patch' APKBUILD \
+    && sed -i "/^sha512sums=\".*/a$(sha512sum ppp.patch)" APKBUILD \
+    && abuild-keygen -a -n \
+    && cp /root/.abuild/*.rsa.pub /etc/apk/keys/
+RUN abuild -r -F -P /build \
+    && ls -laR /build
+
+
+
+
+FROM alpine:3.20
+
+# Setup 
+RUN set -x \
+    && apk add --update --no-cache nano \
+        ifupdown-ng ifupdown-ng-ppp ppp bridge \
+        openrc mdevd-openrc \
+        python3 scapy busybox-openrc \
+        tcpdump strace file \
+        kea radvd dnsmasq \
+    # Disable getty's
+    && sed -i 's/^\(tty\d\:\:\)/#\1/g' /etc/inittab \
+    && sed -i \
+        # Change subsystem type to "docker"
+        -e 's/#rc_sys=".*"/rc_sys="docker"/g' \
+        # Allow all variables through
+        -e 's/#rc_env_allow=".*"/rc_env_allow="\*"/g' \
+        # Start crashed services
+        -e 's/#rc_crashed_stop=.*/rc_crashed_stop=NO/g' \
+        -e 's/#rc_crashed_start=.*/rc_crashed_start=YES/g' \
+        # Define extra dependencies for services
+        -e 's/#rc_provide=".*"/rc_provide="loopback net"/g' \
+        /etc/rc.conf \
+    # Remove unnecessary services
+    && rm -f /etc/init.d/hwdrivers \
+            /etc/init.d/hwclock \
+            /etc/init.d/hwdrivers \
+            /etc/init.d/modules \
+            /etc/init.d/modules-load \
+            /etc/init.d/modloop \
+    # Can't do cgroups
+    && sed -i \
+        -e 's/\tcgroup_add_service/# cgroup_add_service/g' \
+        -e 's/PREFIX|SYSTEMD-NSPAWN/PREFIX|SYSTEMD-NSPAWN|DOCKER/g' \
+        /lib/rc/sh/openrc-run.sh \
+    && sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh
+
+COPY --from=builder /build/main/x86_64/*.apk /tmp/
+COPY --from=builder /root/.abuild/*.rsa.pub /etc/apk/keys/
+RUN ls -la /tmp/ && rm /tmp/dhcp-server-ldap*
+RUN apk add --no-cache /tmp/*.apk
+
+# Copy the network service script into the container
+COPY --chmod=755 services/network/network /etc/init.d/network
+COPY --chmod=755 services/rename-interface/rename-interface /etc/init.d/rename-interface
+
+# Ensure OpenRC directories are set up
+RUN mkdir -p /run/openrc && touch /run/openrc/softlevel
+
+# Add the service to the default runlevel
+RUN rc-update add syslog boot
+RUN rc-update add network default
+
+# Start OpenRC and the custom service
+#CMD ["openrc", "boot"]
+WORKDIR /
+CMD ["/sbin/init"]
+

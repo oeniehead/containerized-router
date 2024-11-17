@@ -5,11 +5,19 @@ RUN mkdir -p /run/ppp
 RUN apk add --update --no-cache dhcpcd
 
 # Copy network configuration
-COPY config/interfaces /etc/network/interfaces
-COPY config/kpn /etc/ppp/peers/kpn
+COPY config/interfaces.template /etc/network/
 
-# Copy IP event handlers
-COPY --chmod=755 events/ip-up /etc/ppp/ip-up
-COPY --chmod=755 events/ipv6-up /etc/ppp/ipv6-up
-COPY --chmod=755 events/ip-event /usr/local/bin/ip-event
+# Add ppp service
+COPY services/ppp/ppp /etc/dinit.d/
+RUN dinitctl --offline --services-dir /etc/dinit.d/ enable ppp
+COPY services/ppp/kpn /etc/ppp/peers/
+COPY --chmod=755 services/ppp/ip-up /etc/ppp/ip-up
+COPY --chmod=755 services/ppp/start-dhcpcd-service /usr/local/bin/
 
+# Add dhcpcd service
+COPY services/dhcpcd/dhcpcd /etc/dinit.d/
+COPY services/dhcpcd/dhcpcd.conf /etc/
+COPY --chmod=755 services/dhcpcd/dhcp-event /usr/lib/dhcpcd/dhcpcd-hooks/99-prefix-handler
+
+# Add the event handler
+COPY --chmod=755 events/ip-event /usr/local/bin/

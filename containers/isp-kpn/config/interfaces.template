@@ -1,0 +1,17 @@
+auto isp_trunk
+iface isp_trunk
+    #post-up sysctl -w "net.ipv6.conf.isp_out.accept_ra=0"
+
+auto isp_internet
+iface isp_internet
+    #post-up sysctl -w "net.ipv6.conf.isp_out.6.accept_ra=0"
+    requires isp_trunk
+    vlan-raw-device isp_trunk
+    vlan-id 6
+
+#auto ppp_bridge
+#iface ppp_bridge
+#    use bridge
+#
+#	bridge-fd 0
+#	bridge-stp off

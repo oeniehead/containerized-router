@@ -9,7 +9,7 @@
 # - Because the abuild system is weird the build must be force to run as
 #   root, but also signing is a bit of an issue. For now a temp key is
 #   generated an copied over to the receiving container.
-FROM alpine:edge AS builder
+FROM alpine:3.20 AS builder
 
 RUN apk add --no-cache alpine-sdk git
 RUN git clone --depth=1 https://gitlab.alpinelinux.org/alpine/aports.git /aports
@@ -32,7 +32,7 @@ RUN abuild -r -F -P /build \
 
 
 
-FROM alpine:edge
+FROM alpine:3.20
 
 # Add base packages
 RUN apk add --update --no-cache nano \
@@ -40,36 +40,21 @@ RUN apk add --update --no-cache nano \
         python3 scapy busybox-openrc \
         tcpdump strace file \
         kea radvd dnsmasq \
-        dinit bash gettext syslog-ng
+        supervisor bash inotify-tools
 
 # Add patched dhcpd
 COPY --from=builder /build/main/x86_64/*.apk /tmp/
 COPY --from=builder /root/.abuild/*.rsa.pub /etc/apk/keys/
 RUN rm /tmp/dhcp-server-ldap* && apk add --no-cache /tmp/*.apk
 
-# Create directory for dinit services
-RUN mkdir -p /etc/dinit.d/boot.d
-COPY services/boot/boot /etc/dinit.d/
+# Configure supervisord and create folder to store services
+COPY supervisord.conf /etc/supervisord.conf
+RUN mkdir -p /etc/supervisor.d/
 
-# Add rename-interfaces service
-COPY services/rename-interfaces/rename-interfaces /etc/dinit.d/
-COPY --chmod=775 services/rename-interfaces/rename-interfaces-env /usr/local/bin
-RUN dinitctl --offline --services-dir /etc/dinit.d/ enable rename-interfaces
 
-# Add network service
-COPY services/network/network /etc/dinit.d/
-COPY --chmod=775 services/network/start-network /usr/local/bin
-RUN dinitctl --offline --services-dir /etc/dinit.d/ enable network
 
-# Add syslog-ng service
-COPY services/syslog-ng/syslog-ng /etc/dinit.d/
-COPY services/syslog-ng/syslog-ng.conf /etc/syslog-ng/
-RUN dinitctl --offline --services-dir /etc/dinit.d/ enable syslog-ng
-
-# Add entrypoint
-COPY --chmod=775 docker-entrypoint.sh /
 
 WORKDIR /
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["/usr/bin/supervisord -n -c /etc/supervisord.conf"]
 
