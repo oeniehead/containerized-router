@@ -51,6 +51,22 @@ services:
       trunk:
         mac_address: 02:42:ac:11:02:03
 
+  firewall:
+    image: firewall
+    privileged: true
+    environment:
+      - MAC_TO_IFACE_1=02:42:ac:11:01:04:eventbus
+      - MAC_TO_IFACE_2=02:42:ac:11:02:04:trunk
+      - INTERFACE_5=management
+      - INTERFACE_10=thuis
+      - INTERFACE_11=cluster
+      - INTERFACE_99=dmz
+    networks:
+      eventbus:
+        mac_address: 02:42:ac:11:01:04
+      trunk:
+        mac_address: 02:42:ac:11:02:04
+
 networks:
   upstream_network:
     driver: bridge

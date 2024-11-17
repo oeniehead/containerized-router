@@ -1,0 +1,8 @@
+FROM router-base:latest
+
+# Probably will need this for a bunch of client software
+#RUN apk add --update --no-cache dhcpcd
+
+# Copy network configuration
+COPY --chmod=775 config/interfaces.generator /etc/network/
+

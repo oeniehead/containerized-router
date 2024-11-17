@@ -4,7 +4,7 @@ import sys
 from scapy.all import Ether, sendp
 
 def main():
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 4:
         print("Usage: ip-event.py <protocol> <ipv4 IP/ipv6 prefix> <reason>")
         return
 
@@ -12,7 +12,7 @@ def main():
     ip_or_prefix = sys.argv[2]
     reason = sys.argv[3]
 
-    print(f"Protocol: {protocol}, Local IP or prefix: {local_ip}, Reason: {reason}")
+    print(f"Protocol: {protocol}, Local IP or prefix: {ip_or_prefix}, Reason: {reason}")
     
     send_event('eventbus', 1, 'This is a test event')
 

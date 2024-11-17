@@ -12,9 +12,9 @@ To build all containers: `sudo ./build-containers`
 
 Status:
 - IPv4 works over PPPoE
-- IPv6 implementation started
-  - ISP simulator distributes IPv6 prefixes
-  - Ingress container has a test config to request prefix with dhcpcd
+- IPv6 works
+- There is a non-functional event sender when IPv6-PD has succeeded
+- Everything now uses dinit for services, because this actually supports dependencies
 - Having all services in separate containers is not viable due to dependencies between services
   - Splitting the ingress container from the rest of the firewall is doable, but this does require an out-of-band channel to communicate the IPv6-PD prefix to the firewall
   - The firewall will run the DHCP and DNS servers
@@ -26,8 +26,15 @@ Status:
 
 TODO:
   - Implement IP forwarding in the ingress container
-  - Implement DHCPv6-PD service in ingress container
-  - Use a reliable service manager for the services, such as supervisord
+  - Implement event handler to communicate public IPv4 and IPv6-PD with firewall/DHCP servers
+  - Check if all logging is correctly forwarded to the stdout of the container:
+    - For ifup this seems not to be the case
+  - Start formalizing a configuration scheme for the firewall that handles:
+    - IPv4 assignments and IPv6 prefixes
+    - Firewall rules
+    - Port forwards
+    - DHCP servers
+    - DNS servers
 
 Notes:
 - Kea DDNS requires DDNS server (bind?) for DNS updates

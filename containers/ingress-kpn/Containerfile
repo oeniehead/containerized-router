@@ -16,7 +16,6 @@ COPY --chmod=755 services/ppp/start-dhcpcd-service /usr/local/bin/
 
 # Add dhcpcd service
 COPY services/dhcpcd/dhcpcd /etc/dinit.d/
-COPY services/dhcpcd/dhcpcd.conf /etc/
 COPY --chmod=755 services/dhcpcd/dhcp-event /usr/lib/dhcpcd/dhcpcd-hooks/99-prefix-handler
 
 # Add the event handler

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Create base configuration for trunk interface
+cat > /etc/network/interfaces << EOF
+auto trunk
+iface trunk
+EOF
+
+# Find all INTERFACE_ environment variables and create VLAN configurations
+env | grep '^INTERFACE_[0-9]\+=' | while IFS='=' read -r key value; do
+    # Extract VLAN ID from environment variable name
+    vlan_id=${key#INTERFACE_}
+    interface_name=$value
+
+    # Append VLAN configuration
+    cat >> /etc/network/interfaces << EOF
+
+auto ${interface_name}
+iface ${interface_name}
+    vlan-raw-device trunk
+    vlan-id ${vlan_id}
+EOF
+done

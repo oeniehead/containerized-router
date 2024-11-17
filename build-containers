@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the order of container builds
-containers=("router-base" "isp-kpn" "ingress-kpn" "upstream-test")
+containers=("router-base" "isp-kpn" "ingress-kpn" "upstream-test" "firewall")
 
 # Iterate over each container and build it
 for container in "${containers[@]}"; do

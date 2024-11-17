@@ -1,9 +1,13 @@
 #!/bin/sh
 
+GENERATOR="/etc/network/interfaces.generator"
 TEMPLATE="/etc/network/interfaces.template"
 OUTPUT="/etc/network/interfaces"
 
-if [ -f "$TEMPLATE" ]; then
+if [ -f "$GENERATOR" ]; then
+    eval "$GENERATOR" > "$OUTPUT"
+    logger -p syslog.info "Created $OUTPUT using $GENERATOR"
+elif [ -f "$TEMPLATE" ]; then
     envsubst < "$TEMPLATE" > "$OUTPUT"
     logger -p syslog.info "Created $OUTPUT using $TEMPLATE"
 elif [ -f "$OUTPUT" ]; then
