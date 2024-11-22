@@ -17,4 +17,5 @@ else
     exit 1
 fi
 
-ifup -a
+# We need to use --force here to have VLAN interfaces created when the container is restarted without being recreated.
+ifup -a --force
