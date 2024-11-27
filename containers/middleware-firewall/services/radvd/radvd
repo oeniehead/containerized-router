@@ -1,0 +1,5 @@
+type = process
+command = /usr/local/bin/start-radvd
+restart = true
+#options = shares-console
+depends-on = network

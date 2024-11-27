@@ -40,3 +40,13 @@ Notes:
 - Kea DDNS requires DDNS server (bind?) for DNS updates
 - ISP connection must sync IPv6 prefix to DHCPv6 servers via backstage event bus
 - Netavark has an example plugin that moves host network interfaces to the container namespace
+
+# Network design
+
+Network is split into multiple VLANs. Each VLAN has a local IPv4 prefix and a local IPv6 prefix. IPv4 addresses are handed out by DHCP. IPv6 addresses are distributed by SLAAC + RDNSS. IPv6 explicitly only distributes ULA addresses to allow for multihoming. This means that radvd must run on the firewall. DHCP services are moved to a container.
+
+Ingress containers are plugged into the DMZ network and will be used as gateways. The firewall decides which ingress to use for outbound traffic. The ingresses will use NPt to translate from ULA prefixes to GUA prefixes appropriate for the ingress. For IPv4, the ingress will simply use NAT.
+
+Ingresses will always use NAT for IPv4, meaning that they maintain a port forwarding list for incoming traffic on IPv4 and perform NAT for outgoing traffic. For IPv6 either NPt is used if IPv6-PD is supported upstream, otherwise a form of NAT6 can be used (for VPNs for instance).
+
+A benefit of this approach is that little knowledge of external addresses is needed inside the network. It can also provide mostly seamless failover support for both IPv4 and IPv6.

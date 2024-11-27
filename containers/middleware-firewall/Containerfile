@@ -1,0 +1,26 @@
+FROM router-base:latest
+
+# Probably will need this for a bunch of client software
+#RUN apk add --update --no-cache dhcpcd
+
+# Copy network configuration
+COPY --chmod=775 config/interfaces.generator /etc/network/
+
+# Add radvd service
+COPY services/radvd/radvd /etc/dinit.d/
+COPY --chmod=775 services/radvd/generate-radvd-config /usr/local/bin/
+COPY --chmod=775 services/radvd/start-radvd /usr/local/bin/
+RUN dinitctl --offline --services-dir /etc/dinit.d/ enable radvd
+
+# Add kea dhcp services
+COPY services/dhcpd/generate-dhcpd /etc/dinit.d/
+COPY services/dhcpd/dhcpd4 /etc/dinit.d/
+COPY services/dhcpd/dhcpd6 /etc/dinit.d/
+COPY services/dhcpd/dhcpd-ddns /etc/dinit.d/
+COPY --chmod=775 services/dhcpd/generate-dhcpd-config /usr/local/bin/
+RUN dinitctl --offline --services-dir /etc/dinit.d/ enable generate-dhcpd
+RUN dinitctl --offline --services-dir /etc/dinit.d/ enable dhcpd4
+RUN dinitctl --offline --services-dir /etc/dinit.d/ enable dhcpd6
+RUN dinitctl --offline --services-dir /etc/dinit.d/ enable dhcpd-ddns
+
+

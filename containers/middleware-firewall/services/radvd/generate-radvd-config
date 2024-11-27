@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Create base radvd configuration
+cat > /etc/radvd.conf << EOF
+# Generated radvd configuration
+EOF
+
+# Find all VLAN_ environment variables and create radvd interface configurations
+env | grep '^VLAN_[0-9]\+=' | while IFS='=' read -r key value; do
+    # Extract VLAN ID from environment variable name
+    vlan_id=${key#VLAN_}
+    interface_name=$value
+
+    # Append interface configuration for radvd
+    cat >> /etc/radvd.conf << EOF
+
+interface ${interface_name}
+{
+    AdvSendAdvert on;
+    MinRtrAdvInterval 30;
+    MaxRtrAdvInterval 100;
+    prefix fd:0:0:${vlan_id}::/64
+    {
+        AdvOnLink on;
+        AdvAutonomous on;
+        AdvRouterAddr on;
+    };
+    RDNSS fd:0:0:${vlan_id}::1 {
+    };
+};
+EOF
+done

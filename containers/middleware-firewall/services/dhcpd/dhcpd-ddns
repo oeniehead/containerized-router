@@ -1,0 +1,5 @@
+type = process
+command = kea-dhcp-ddns -c /etc/kea/kea-dhcp-ddns.conf -d
+restart = true
+#options = shares-console
+depends-on = network

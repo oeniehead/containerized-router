@@ -4,5 +4,7 @@ FROM router-base:latest
 #RUN apk add --update --no-cache dhcpcd
 
 # Copy network configuration
-COPY --chmod=775 config/interfaces.generator /etc/network/
+COPY --chmod=775 config/interfaces.template /etc/network/
+COPY config/dhcpcd.conf /etc/
+
 

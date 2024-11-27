@@ -1,0 +1,4 @@
+#!/bin/sh
+
+generate-radvd-config
+radvd -d 5 -C /etc/radvd.conf -p /run/radvd.pid

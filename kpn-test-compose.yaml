@@ -7,25 +7,25 @@ services:
     image: upstream-test
     privileged: true
     environment:
-      - MAC_TO_IFACE_1=02:42:ac:11:02:02:internet
+      - MAC_TO_IFACE_1=f0:00:00:00:02:02:internet
     networks:
       upstream_network:
-        mac_address: 02:42:ac:11:02:02
+        mac_address: f0:00:00:00:02:02
         ipv4_address: 5.0.0.2
         ipv6_address: 2001:ffff::2
   isp-kpn:
     image: isp-kpn
     privileged: true
     environment:
-      - MAC_TO_IFACE_1=02:42:ac:11:00:02:isp_trunk
-      - MAC_TO_IFACE_2=02:42:ac:11:02:03:internet
+      - MAC_TO_IFACE_1=f0:00:00:00:00:02:isp_trunk
+      - MAC_TO_IFACE_2=f0:00:00:00:02:03:internet
     volumes:
       - isp_duid:/run/duid
     networks:
       isp_network:
-        mac_address: 02:42:ac:11:00:02
+        mac_address: f0:00:00:00:00:02
       upstream_network:
-        mac_address: 02:42:ac:11:02:03
+        mac_address: f0:00:00:00:02:03
         ipv4_address: 5.0.0.3
         ipv6_address: 2001:ffff::3
 
@@ -33,9 +33,9 @@ services:
     image: ingress-kpn
     privileged: true
     environment:
-      - MAC_TO_IFACE_1=02:42:ac:11:00:03:isp_in
-      - MAC_TO_IFACE_2=02:42:ac:11:01:03:eventbus
-      - MAC_TO_IFACE_3=02:42:ac:11:02:03:trunk
+      - MAC_TO_IFACE_1=f0:00:00:00:00:03:isp_in
+      - MAC_TO_IFACE_2=f0:00:00:00:01:03:eventbus
+      - MAC_TO_IFACE_3=f0:00:00:00:02:03:trunk
       - DMZ_VLAN=99
       - DMZ_IPV4=10.99.0.2/16
       - DMZ_IPV6=fd:0:0:99::2/64
@@ -45,27 +45,39 @@ services:
       - "/dev/ppp:/dev/ppp"
     networks:
       isp_network:
-        mac_address: 02:42:ac:11:00:03
+        mac_address: f0:00:00:00:00:03
       eventbus:
-        mac_address: 02:42:ac:11:01:03
+        mac_address: f0:00:00:00:01:03
       trunk:
-        mac_address: 02:42:ac:11:02:03
+        mac_address: f0:00:00:00:02:03
 
-  firewall:
-    image: firewall
+  middleware-firewall:
+    image: middleware-firewall
     privileged: true
     environment:
-      - MAC_TO_IFACE_1=02:42:ac:11:01:04:eventbus
-      - MAC_TO_IFACE_2=02:42:ac:11:02:04:trunk
-      - INTERFACE_5=management
-      - INTERFACE_10=thuis
-      - INTERFACE_11=cluster
-      - INTERFACE_99=dmz
+      - MAC_TO_IFACE_1=f0:00:00:00:01:04:eventbus
+      - MAC_TO_IFACE_2=f0:00:00:00:02:04:trunk
+      - VLAN_5=management
+      - VLAN_10=thuis
+      - VLAN_11=cluster
+      - VLAN_99=dmz
+    sysctls:
+      - "net.ipv6.conf.all.forwarding=1"
     networks:
       eventbus:
-        mac_address: 02:42:ac:11:01:04
+        mac_address: f0:00:00:00:01:04
       trunk:
-        mac_address: 02:42:ac:11:02:04
+        mac_address: f0:00:00:00:02:04
+
+  test-client:
+    image: test-client
+    privileged: true
+    environment:
+      - MAC_TO_IFACE_1=f0:00:00:00:02:05:trunk
+      - VLAN=10
+    networks:
+      trunk:
+        mac_address: f0:00:00:00:02:05
 
 networks:
   upstream_network:

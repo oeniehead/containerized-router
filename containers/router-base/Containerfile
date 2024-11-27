@@ -39,7 +39,8 @@ RUN apk add --update --no-cache nano \
         ifupdown-ng ifupdown-ng-ppp ppp bridge \
         python3 scapy busybox-openrc \
         tcpdump strace file \
-        kea radvd dnsmasq \
+        kea kea-dhcp-ddns kea-hook-bootp kea-hook-run-script \
+        radvd dnsmasq dhcpcd \
         dinit bash gettext syslog-ng
 
 # Add patched dhcpd

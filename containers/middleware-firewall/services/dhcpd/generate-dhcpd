@@ -1,0 +1,5 @@
+type = scripted
+command = /usr/local/bin/generate-dhcpd-config
+restart = true
+#options = shares-console
+depends-on = network

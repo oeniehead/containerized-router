@@ -1,0 +1,5 @@
+type = process
+command = kea-dhcp6 -c /etc/kea/kea-dhcp6.conf -d
+restart = true
+#options = shares-console
+depends-on = generate-dhcpd

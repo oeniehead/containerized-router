@@ -1,0 +1,225 @@
+#!/bin/sh
+
+# Create base Kea DHCPv4 configuration
+cat > /etc/kea/kea-dhcp4.conf << EOF
+{
+    "Dhcp4": {
+        "loggers": [
+            {
+                "name": "kea-dhcp4",
+                "output_options": [
+                    {
+                        "output": "syslog",
+                        "pattern": "%-5p %m\n",
+                        "flush": true
+                    }
+                ],
+                "severity": "DEBUG",
+                "debuglevel": 0
+            }
+        ],
+        "interfaces-config": {
+            "interfaces": [ "*" ]
+        },
+        "lease-database": {
+            "type": "memfile",
+            "persist": true,
+            "name": "/var/lib/kea/dhcp4.leases"
+        },
+        "valid-lifetime": 4000,
+        "renew-timer": 1000,
+        "rebind-timer": 2000,
+        "option-data": [
+            {
+                "name": "domain-name-servers",
+                "data": "208.67.222.222, 208.67.220.220"
+            }
+        ],
+        "subnet4": [
+EOF
+
+# First subnet entry doesn't need a comma
+first=true
+
+# Find all VLAN_ environment variables and create subnet configurations
+env | grep '^VLAN_[0-9]\+=' | while IFS='=' read -r key value; do
+    # Extract VLAN ID from environment variable name
+    vlan_id=${key#VLAN_}
+
+    if [ "$first" = true ]; then
+        first=false
+    else
+        echo "," >> /etc/kea/kea-dhcp4.conf
+    fi
+
+    # Append subnet configuration
+    cat >> /etc/kea/kea-dhcp4.conf << EOF
+            {
+                "subnet": "10.${vlan_id}.0.0/24",
+                "pools": [
+                    {
+                        "pool": "10.${vlan_id}.0.2 - 10.${vlan_id}.0.254"
+                    }
+                ],
+                "interface": "${value}",
+                "id": ${vlan_id}
+            }
+EOF
+done
+
+# Create base Kea DHCPv6 configuration
+cat > /etc/kea/kea-dhcp6.conf << EOF
+{
+    "Dhcp6": {
+        "loggers": [
+            {
+                "name": "kea-dhcp6",
+                "output_options": [
+                    {
+                        "output": "syslog",
+                        "pattern": "%-5p %m\n",
+                        "flush": true
+                    }
+                ],
+                "severity": "DEBUG",
+                "debuglevel": 0
+            }
+        ],
+        "interfaces-config": {
+            "interfaces": [ "*" ]
+        },
+        "lease-database": {
+            "type": "memfile",
+            "persist": true,
+            "name": "/var/lib/kea/dhcp6.leases"
+        },
+        "valid-lifetime": 4000,
+        "renew-timer": 1000,
+        "rebind-timer": 2000,
+        "option-data": [
+            {
+                "name": "dns-servers",
+                "data": "2620:119:35::35, 2620:119:53::53"
+            }
+        ],
+        "dhcp-ddns": {
+            "enable-updates": true,
+            "server-ip": "127.0.0.1",
+            "server-port": 53001,
+            "sender-ip": "",
+            "sender-port": 0,
+            "max-queue-size": 1024,
+            "ncr-protocol": "UDP",
+            "ncr-format": "JSON"
+        },
+        "subnet6": [
+EOF
+
+# Reset first flag for IPv6 subnets
+first=true
+
+# Find all VLAN_ environment variables and create IPv6 subnet configurations
+env | grep '^VLAN_[0-9]\+=' | while IFS='=' read -r key value; do
+    # Extract VLAN ID from environment variable name
+    vlan_id=${key#VLAN_}
+
+    if [ "$first" = true ]; then
+        first=false
+    else
+        echo "," >> /etc/kea/kea-dhcp6.conf
+    fi
+
+    # Append subnet configuration
+    cat >> /etc/kea/kea-dhcp6.conf << EOF
+            {
+                "subnet": "fd:0:0:${vlan_id}::/64",
+                "interface": "${value}",
+                "id": ${vlan_id},
+                "rapid-commit": true,
+                "ddns-send-updates": true,
+                "ddns-generated-prefix": "dhcp",
+                "ddns-qualifying-suffix": "example.com",
+                "option-data": [
+                    {
+                        "name": "dns-servers",
+                        "data": "2620:119:35::35, 2620:119:53::53"
+                    }
+                ]
+            }
+EOF
+done
+
+# Close the configurations
+cat >> /etc/kea/kea-dhcp4.conf << EOF
+        ]
+    }
+}
+EOF
+
+cat >> /etc/kea/kea-dhcp6.conf << EOF
+        ]
+    }
+}
+EOF
+
+# Create DDNS configuration
+cat > /etc/kea/kea-dhcp-ddns.conf << EOF
+{
+    "DhcpDdns": {
+        "loggers": [
+            {
+                "name": "kea-dhcp-ddns",
+                "output_options": [
+                    {
+                        "output": "syslog",
+                        "pattern": "%-5p %m\n",
+                        "flush": true
+                    }
+                ],
+                "severity": "DEBUG",
+                "debuglevel": 0
+            }
+        ],
+        "ip-address": "127.0.0.1",
+        "port": 53001,
+        "dns-server-timeout": 100,
+        "ncr-protocol": "UDP",
+        "ncr-format": "JSON",
+        "forward-ddns": {
+            "ddns-domains": [
+                {
+                    "name": "example.com.",
+                    "dns-servers": [
+                        {
+                            "ip-address": "127.0.0.1",
+                            "port": 53
+                        }
+                    ]
+                }
+            ]
+        },
+        "reverse-ddns": {
+            "ddns-domains": [
+                {
+                    "name": "in-addr.arpa.",
+                    "dns-servers": [
+                        {
+                            "ip-address": "127.0.0.1",
+                            "port": 53
+                        }
+                    ]
+                },
+                {
+                    "name": "ip6.arpa.",
+                    "dns-servers": [
+                        {
+                            "ip-address": "127.0.0.1",
+                            "port": 53
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
+EOF

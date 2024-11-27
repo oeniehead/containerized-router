@@ -1,0 +1,10 @@
+auto trunk
+iface trunk
+    
+auto uplink
+iface uplink
+    requires trunk
+    vlan-raw-device trunk
+    vlan-id ${VLAN}
+    use dhcp
+    dhcp-config /etc/dhcpcd.conf
