@@ -17,16 +17,16 @@ env | grep '^VLAN_[0-9]\+=' | while IFS='=' read -r key value; do
 interface ${interface_name}
 {
     AdvSendAdvert on;
+    AdvManagedFlag on;
     MinRtrAdvInterval 30;
     MaxRtrAdvInterval 100;
     prefix fd:0:0:${vlan_id}::/64
     {
         AdvOnLink on;
         AdvAutonomous on;
-        AdvRouterAddr on;
     };
-    RDNSS fd:0:0:${vlan_id}::1 {
-    };
+    #RDNSS fd:0:0:${vlan_id}::1 {
+    #};
 };
 EOF
 done

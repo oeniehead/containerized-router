@@ -35,6 +35,16 @@ cat > /etc/kea/kea-dhcp4.conf << EOF
                 "data": "208.67.222.222, 208.67.220.220"
             }
         ],
+        "dhcp-ddns": {
+            "enable-updates": true,
+            "server-ip": "127.0.0.1",
+            "server-port": 53001,
+            "sender-ip": "",
+            "sender-port": 0,
+            "max-queue-size": 1024,
+            "ncr-protocol": "UDP",
+            "ncr-format": "JSON"
+        },
         "subnet4": [
 EOF
 
@@ -66,6 +76,13 @@ env | grep '^VLAN_[0-9]\+=' | while IFS='=' read -r key value; do
             }
 EOF
 done
+
+# Close the configurations
+cat >> /etc/kea/kea-dhcp4.conf << EOF
+        ]
+    }
+}
+EOF
 
 # Create base Kea DHCPv6 configuration
 cat > /etc/kea/kea-dhcp6.conf << EOF
@@ -138,23 +155,10 @@ env | grep '^VLAN_[0-9]\+=' | while IFS='=' read -r key value; do
                 "rapid-commit": true,
                 "ddns-send-updates": true,
                 "ddns-generated-prefix": "dhcp",
-                "ddns-qualifying-suffix": "example.com",
-                "option-data": [
-                    {
-                        "name": "dns-servers",
-                        "data": "2620:119:35::35, 2620:119:53::53"
-                    }
-                ]
+                "ddns-qualifying-suffix": "example.com"
             }
 EOF
 done
-
-# Close the configurations
-cat >> /etc/kea/kea-dhcp4.conf << EOF
-        ]
-    }
-}
-EOF
 
 cat >> /etc/kea/kea-dhcp6.conf << EOF
         ]
