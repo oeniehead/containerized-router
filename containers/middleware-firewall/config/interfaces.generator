@@ -20,6 +20,7 @@ iface ${interface_name}
     vlan-raw-device trunk
     vlan-id ${vlan_id}
     address 10.${vlan_id}.0.1/24
-    address fd:0:0:${vlan_id}::1/64
+    address fd:0:${vlan_id}:0::1/64
+    address fd:0:${vlan_id}:1::1/64
 EOF
 done

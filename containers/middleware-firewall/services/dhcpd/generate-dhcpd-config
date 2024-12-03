@@ -14,8 +14,7 @@ cat > /etc/kea/kea-dhcp4.conf << EOF
                         "flush": true
                     }
                 ],
-                "severity": "DEBUG",
-                "debuglevel": 0
+                "severity": "INFO"
             }
         ],
         "interfaces-config": {
@@ -98,8 +97,7 @@ cat > /etc/kea/kea-dhcp6.conf << EOF
                         "flush": true
                     }
                 ],
-                "severity": "DEBUG",
-                "debuglevel": 0
+                "severity": "INFO"
             }
         ],
         "interfaces-config": {
@@ -149,7 +147,15 @@ env | grep '^VLAN_[0-9]\+=' | while IFS='=' read -r key value; do
     # Append subnet configuration
     cat >> /etc/kea/kea-dhcp6.conf << EOF
             {
-                "subnet": "fd:0:0:${vlan_id}::/64",
+                "subnet": "fd:0:${vlan_id}:0::/48",
+                "pools": [ { "pool": "fd:0:${vlan_id}:0::/64" } ],
+                "pd-pools": [
+                    {
+                        "prefix": "fd:0:${vlan_id}:8000::",
+                        "prefix-len": 49,
+                        "delegated-len": 64
+                    }
+                ],
                 "interface": "${value}",
                 "id": ${vlan_id},
                 "rapid-commit": true,
@@ -180,8 +186,7 @@ cat > /etc/kea/kea-dhcp-ddns.conf << EOF
                         "flush": true
                     }
                 ],
-                "severity": "DEBUG",
-                "debuglevel": 0
+                "severity": "INFO"
             }
         ],
         "ip-address": "127.0.0.1",

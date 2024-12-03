@@ -1,5 +1,5 @@
 type = process
-command = kea-dhcp4 -c /etc/kea/kea-dhcp4.conf -d
+command = kea-dhcp4 -c /etc/kea/kea-dhcp4.conf
 restart = true
 #options = shares-console
 depends-on = generate-dhcpd
