@@ -93,24 +93,26 @@ networks:
       - subnet: 2001:ffff::/96
         gateway: 2001:ffff::1
   trunk:
-    driver: bridge
-    enable_ipv6: true
-    internal: true
-    driver_opts:
-      com.docker.network.bridge.name: trunk
-  # isp_network:
-  #   external: true
-  # eventbus:
-  #   external: true
+    external: true
   isp_network:
-    driver: bridge
-    internal: true
-    driver_opts:
-      com.docker.network.bridge.name: isp_network
+    external: true
   eventbus:
-    driver: bridge
-    internal: true
-    driver_opts:
-      com.docker.network.bridge.name: eventbus
+    external: true
+  # trunk:
+  #   driver: bridge
+  #   enable_ipv6: true
+  #   internal: true
+  #   driver_opts:
+  #     com.docker.network.bridge.name: trunk
+  # isp_network:
+  #   driver: bridge
+  #   internal: true
+  #   driver_opts:
+  #     com.docker.network.bridge.name: isp_network
+  # eventbus:
+  #   driver: bridge
+  #   internal: true
+  #   driver_opts:
+  #     com.docker.network.bridge.name: eventbus
 
 #docker network create --driver=bridge --internal --ipv6 --opt com.docker.network.bridge.name=isp_network isp_network 
