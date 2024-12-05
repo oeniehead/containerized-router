@@ -52,8 +52,9 @@ ddns-update-style none;
 option dhcp6.name-servers 2620:0:ccc::2, 2620:0:ccd::2;
 option dhcp6.domain-search "fakekpn.local";
 
-max-lease-time 432000;
-default-lease-time 86400;
+# Very short lease time
+max-lease-time 120;
+default-lease-time 120;
 
 subnet6 2001:8c0::/32 {
     range6 2001:8c0:0000::/64;

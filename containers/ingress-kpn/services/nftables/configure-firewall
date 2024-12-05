@@ -1,0 +1,5 @@
+type = scripted
+command = load-nftables-config
+restart = true
+depends-on = network
+#options = shares-console

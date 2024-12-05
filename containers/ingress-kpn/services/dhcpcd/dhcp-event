@@ -1,8 +1,22 @@
 #!/bin/sh
 
 case "$reason" in
-    BOUND6|RENEW6|REBIND6|DEPREF6|EXPIRE6)
-        # Call our Python script with the new prefix information
-        /usr/local/bin/ip-event "ipv6" "$new_delegated_dhcp6_prefix" "$reason"
+    BOUND6|RENEW6)
+        # Get the first prefix
+        PREFIX="${new_dhcp6_ia_pd1_prefix1}/${new_dhcp6_ia_pd1_prefix1_length}"
+
+        # Update the NPT rule
+        nft flush chain ip6 npt translate
+        nft add rule ip6 npt translate ip6 saddr fd:0:0::/48 snat ip6 prefix to "${PREFIX}"
+
+        # Call Python script with the new prefix information
+        #/usr/local/bin/ip-event "ipv6" "$new_delegated_dhcp6_prefix" "$reason"
+        ;;
+    REBIND6|DEPREF6|EXPIRE6)
+        # No prefix - enable drop rule
+        nft flush chain ip6 npt translate
+        nft add rule ip6 npt translate ip6 oifname "isp_internet_in" drop
         ;;
 esac
+
+#logger -p syslog.info "$(env)"

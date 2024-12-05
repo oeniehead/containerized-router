@@ -20,15 +20,15 @@ interface ${interface_name}
     AdvManagedFlag on;
     MinRtrAdvInterval 30;
     MaxRtrAdvInterval 100;
-    prefix fd:0:${vlan_id}:1::/64
+    prefix fd:0:0:${vlan_id}01::/64
     {
         AdvOnLink on;
         AdvAutonomous on;
     };
-    route fd:0:${vlan_id}:0::/64
+    route fd:0:0:${vlan_id}00::/64
     {
     };
-    route fd:0:${vlan_id}:8000::/49
+    route fd:0:0:${vlan_id}80::/57
     {
     };
 };

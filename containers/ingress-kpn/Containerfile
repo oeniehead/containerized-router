@@ -18,5 +18,11 @@ COPY --chmod=755 services/ppp/start-dhcpcd-service /usr/local/bin/
 COPY services/dhcpcd/dhcpcd /etc/dinit.d/
 COPY --chmod=755 services/dhcpcd/dhcp-event /usr/lib/dhcpcd/dhcpcd-hooks/99-prefix-handler
 
+# Add nftables
+COPY services/nftables/configure-firewall /etc/dinit.d/
+COPY --chmod=755 services/nftables/load-nftables-config /usr/local/bin/
+RUN dinitctl --offline --services-dir /etc/dinit.d/ enable configure-firewall
+COPY config/nftables.conf /etc/
+
 # Add the event handler
 COPY --chmod=755 events/ip-event /usr/local/bin/

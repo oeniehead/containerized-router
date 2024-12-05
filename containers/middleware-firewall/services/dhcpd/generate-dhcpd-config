@@ -147,12 +147,12 @@ env | grep '^VLAN_[0-9]\+=' | while IFS='=' read -r key value; do
     # Append subnet configuration
     cat >> /etc/kea/kea-dhcp6.conf << EOF
             {
-                "subnet": "fd:0:${vlan_id}:0::/48",
-                "pools": [ { "pool": "fd:0:${vlan_id}:0::/64" } ],
+                "subnet": "fd:0:0:${vlan_id}00::/56",
+                "pools": [ { "pool": "fd:0:0:${vlan_id}00::/64" } ],
                 "pd-pools": [
                     {
-                        "prefix": "fd:0:${vlan_id}:8000::",
-                        "prefix-len": 49,
+                        "prefix": "fd:0:0:${vlan_id}80::",
+                        "prefix-len": 57,
                         "delegated-len": 64
                     }
                 ],

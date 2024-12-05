@@ -20,7 +20,11 @@ iface ${interface_name}
     vlan-raw-device trunk
     vlan-id ${vlan_id}
     address 10.${vlan_id}.0.1/24
-    address fd:0:${vlan_id}:0::1/64
-    address fd:0:${vlan_id}:1::1/64
+    address fd:0:0:${vlan_id}00::1/56
 EOF
+
+    # Add gateway if interface is dmz
+    if [ "${interface_name}" = "dmz" ]; then
+        echo "    gateway ${GATEWAY}" >> /etc/network/interfaces
+    fi
 done

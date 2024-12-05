@@ -38,7 +38,7 @@ services:
       - MAC_TO_IFACE_3=f0:00:00:00:02:03:trunk
       - DMZ_VLAN=99
       - DMZ_IPV4=10.99.0.2/16
-      - DMZ_IPV6=fd:0:0:99::2/64
+      - DMZ_IPV6=fd:0:0:9900::2/64
     volumes:
       - ingress_duid:/run/duid
     devices:
@@ -61,6 +61,7 @@ services:
       - VLAN_10=thuis
       - VLAN_11=cluster
       - VLAN_99=dmz
+      - GATEWAY=fd:0:0:9900::2
     sysctls:
       - "net.ipv6.conf.all.forwarding=1"
     networks:

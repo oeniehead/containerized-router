@@ -41,7 +41,7 @@ RUN apk add --update --no-cache nano \
         tcpdump strace file \
         kea kea-dhcp-ddns kea-hook-bootp kea-hook-run-script \
         radvd dnsmasq dhcpcd \
-        dinit bash gettext syslog-ng
+        dinit bash gettext syslog-ng nftables
 
 # Add patched dhcpd
 COPY --from=builder /build/main/x86_64/*.apk /tmp/
